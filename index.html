@@ -48,6 +48,16 @@ h1 em{background:linear-gradient(135deg,#fff 0%,#fff 35%,#f4c7b6 43%,#fff 50%,#f
 .btn.hot:after,.pill:after{content:"";position:absolute;top:-50%;left:-120%;width:65%;height:200%;transform:rotate(28deg);background:linear-gradient(90deg,transparent,#ffffff77,transparent);animation:cardDiagonalShine 6s ease-in-out infinite}
 @media(prefers-reduced-motion:reduce){body:after,.logo span:last-child,h1 em,.hero:after,.service-list .service:after,.btn.hot:after,.pill:after{animation:none!important}}
 
+
+/* Moving brand mantra + touch-reactive living flame */
+.ticker{position:relative;overflow:hidden;white-space:nowrap;text-align:left;transform:rotate(-1deg) scale(1.02);padding:17px 0}
+.ticker{font-size:0}
+.ticker:before{content:"CREATE BOLD ✳ INSPIRE REAL ✳ BLAZE BEYOND ✳ CREATE BOLD ✳ INSPIRE REAL ✳ BLAZE BEYOND ✳";display:inline-block;font-size:12px;letter-spacing:.18em;word-spacing:20px;white-space:nowrap;padding-left:100%;animation:mantraTravel 22s linear infinite}
+@keyframes mantraTravel{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+body:before{content:"";position:fixed;inset:0;z-index:4;pointer-events:none;opacity:var(--flame-active,0);transition:opacity .45s ease;background:radial-gradient(ellipse 170px 210px at var(--flame-x,50%) var(--flame-y,50%),#ffb45b55 0%,#ff5a2e30 28%,#ed291b16 48%,transparent 74%),radial-gradient(ellipse 95px 130px at var(--flame-x,50%) var(--flame-y,50%),#fff0b51b 0%,#ff7a3618 35%,transparent 72%);mix-blend-mode:screen}
+body.flame-contact:before{opacity:1;filter:blur(2px)}
+@media(prefers-reduced-motion:reduce){.ticker:before{animation:none;transform:none;padding-left:0}body:before{transition:none}}
+
 </style>
 </head>
 <body>
@@ -121,4 +131,30 @@ try{
  if(!reduced)animate();else renderer.render(scene,camera);
 }catch(err){stage.classList.add('no-webgl');canvas.style.display='none';stage.style.background='radial-gradient(ellipse at center,#70201f,#100b10 65%,transparent)';console.warn('3D scene unavailable; using CSS fallback.',err)}
 </script>
+
+<script>
+/* The ember glow follows a mouse, stylus, or finger without blocking page controls. */
+(function(){
+  const root=document.documentElement, body=document.body;
+  let lastX=50,lastY=50;
+  function setFlame(x,y,active){
+    lastX=x/window.innerWidth*100; lastY=y/window.innerHeight*100;
+    root.style.setProperty('--flame-x',lastX+'%');
+    root.style.setProperty('--flame-y',lastY+'%');
+    root.style.setProperty('--flame-active',active?'1':'.22');
+    if(active) body.classList.add('flame-contact');
+    else body.classList.remove('flame-contact');
+  }
+  window.addEventListener('pointermove',function(e){
+    setFlame(e.clientX,e.clientY,e.pointerType==='touch');
+    if(e.pointerType!=='touch') root.style.setProperty('--flame-active','.62');
+  },{passive:true});
+  window.addEventListener('pointerdown',function(e){setFlame(e.clientX,e.clientY,true)},{passive:true});
+  window.addEventListener('pointerup',function(){body.classList.remove('flame-contact');root.style.setProperty('--flame-active','.18')},{passive:true});
+  window.addEventListener('pointerleave',function(){body.classList.remove('flame-contact');root.style.setProperty('--flame-active','0')},{passive:true});
+  window.addEventListener('touchmove',function(e){if(e.touches&&e.touches[0])setFlame(e.touches[0].clientX,e.touches[0].clientY,true)},{passive:true});
+  window.addEventListener('touchend',function(){body.classList.remove('flame-contact');root.style.setProperty('--flame-active','0')},{passive:true});
+})();
+</script>
+
 </body></html>
